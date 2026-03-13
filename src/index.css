@@ -21,3 +21,8 @@
   }
 }
 
+/* Remove focus outline from recharts elements */
+.recharts-wrapper * {
+  outline: none !important;
+}
+

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   LayoutDashboard, Car, Users, CalendarDays, Settings, 
-  Calculator, BarChart3, Headset, ChevronDown, ChevronRight, Menu, Map
+  Calculator, BarChart3, Headset, ChevronDown, ChevronRight, Menu, Map, X
 } from 'lucide-react';
 import { sidebarMenu } from '../data/mockData';
 import { cn } from '../lib/utils';
@@ -25,16 +25,29 @@ export function Sidebar({ isCollapsed, toggleSidebar, activeId, onNavigate }: Si
   };
 
   return (
-    <aside className={cn(
-      "bg-slate-900 text-slate-300 transition-all duration-300 flex flex-col h-screen sticky top-0",
-      isCollapsed ? "w-16" : "w-64"
-    )}>
-      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800">
-        {!isCollapsed && <span className="text-white font-semibold text-lg truncate">FleetManager</span>}
-        <button onClick={toggleSidebar} className="p-1 hover:bg-slate-800 rounded-md text-slate-400 hover:text-white transition-colors">
-          <Menu size={20} />
-        </button>
-      </div>
+    <>
+      {/* Mobile overlay */}
+      {!isCollapsed && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-sm transition-opacity animate-in fade-in" 
+          onClick={toggleSidebar}
+        />
+      )}
+      <aside className={cn(
+        "bg-slate-900 text-slate-300 transition-all duration-300 flex flex-col h-screen fixed lg:sticky top-0 z-50",
+        isCollapsed ? "-translate-x-full lg:translate-x-0 lg:w-16" : "translate-x-0 w-64"
+      )}>
+        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800">
+          <span className={cn("text-white font-semibold text-lg truncate transition-opacity", isCollapsed ? "lg:hidden" : "block")}>
+            FleetManager
+          </span>
+          <button onClick={toggleSidebar} className="hidden lg:block p-1 hover:bg-slate-800 rounded-md text-slate-400 hover:text-white transition-colors">
+            <Menu size={20} />
+          </button>
+          <button onClick={toggleSidebar} className="lg:hidden p-1 hover:bg-slate-800 rounded-md text-slate-400 hover:text-white transition-colors">
+            <X size={20} />
+          </button>
+        </div>
       
       <div className="flex-1 overflow-y-auto py-4 custom-scrollbar">
         <ul className="space-y-1 px-2">
@@ -50,6 +63,9 @@ export function Sidebar({ isCollapsed, toggleSidebar, activeId, onNavigate }: Si
                   onClick={() => {
                     if (hasSubMenus) toggleMenu(item.id);
                     onNavigate(item.id);
+                    if (!hasSubMenus && window.innerWidth < 1024) {
+                      toggleSidebar();
+                    }
                   }}
                   className={cn(
                     "w-full flex items-center px-2 py-2.5 rounded-md transition-colors group",
@@ -86,5 +102,6 @@ export function Sidebar({ isCollapsed, toggleSidebar, activeId, onNavigate }: Si
         </ul>
       </div>
     </aside>
+    </>
   );
 }

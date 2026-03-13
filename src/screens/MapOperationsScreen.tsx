@@ -169,6 +169,8 @@ export function MapOperationsScreen() {
   const [selectedRegion, setSelectedRegion] = useState<string>('Tất cả khu vực');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   
   const filteredVehicles = mockVehicles.filter(v => {
     if (searchQuery) {
@@ -520,31 +522,116 @@ export function MapOperationsScreen() {
             </div>
           </div>
         </div>
-
-        {/* Floating Actions */}
-        <div className="absolute bottom-4 lg:bottom-6 left-1/2 -translate-x-1/2 flex items-center bg-slate-900 text-white rounded-full px-4 py-2 lg:px-6 lg:py-3 shadow-2xl gap-2 lg:gap-4 pointer-events-auto z-[400] w-max">
-          <button className="flex items-center gap-1 lg:gap-2 hover:text-blue-400 transition-colors border-r border-slate-700 pr-2 lg:pr-4">
-            <PlusCircle className="w-4 h-4 lg:w-5 lg:h-5" />
-            <span className="text-xs lg:text-sm font-bold">Tạo Vận Đơn Mới</span>
-          </button>
-          <button className="flex items-center gap-1 lg:gap-2 hover:text-blue-400 transition-colors">
-            <FileText className="w-4 h-4 lg:w-5 lg:h-5" />
-            <span className="text-xs lg:text-sm font-bold">Báo Cáo</span>
-          </button>
-        </div>
       </section>
 
       {/* Floating Actions (Moved outside map to float over everything) */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center bg-slate-900 text-white rounded-full px-5 py-3 lg:px-6 lg:py-3 shadow-2xl gap-3 lg:gap-4 pointer-events-auto z-[400] w-max">
-        <button className="flex items-center gap-2 hover:text-blue-400 transition-colors border-r border-slate-700 pr-3 lg:pr-4">
+        <button onClick={() => setShowCreateModal(true)} className="flex items-center gap-2 hover:text-blue-400 transition-colors border-r border-slate-700 pr-3 lg:pr-4">
           <PlusCircle className="w-5 h-5" />
           <span className="text-sm font-bold hidden md:inline">Tạo Vận Đơn Mới</span>
         </button>
-        <button className="flex items-center gap-2 hover:text-blue-400 transition-colors">
+        <button onClick={() => setShowReportModal(true)} className="flex items-center gap-2 hover:text-blue-400 transition-colors">
           <FileText className="w-5 h-5" />
           <span className="text-sm font-bold hidden md:inline">Báo Cáo</span>
         </button>
       </div>
+
+      {/* Create Booking Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex justify-between items-center p-4 lg:p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800">Tạo Vận Đơn Mới</h3>
+              <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 lg:p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Khách hàng</label>
+                <input type="text" placeholder="Nhập tên khách hàng..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Điểm lấy hàng</label>
+                  <input type="text" placeholder="Nhập địa chỉ..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1">Điểm giao hàng</label>
+                  <input type="text" placeholder="Nhập địa chỉ..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Loại xe yêu cầu</label>
+                <select className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option>Xe tải 1.5 tấn</option>
+                  <option>Xe tải 2.5 tấn</option>
+                  <option>Xe tải 5 tấn</option>
+                  <option>Xe container</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Ghi chú</label>
+                <textarea rows={3} placeholder="Ghi chú thêm..." className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+              </div>
+            </div>
+            <div className="p-4 lg:p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 bg-slate-100 rounded-lg transition-colors">
+                Hủy
+              </button>
+              <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm">
+                Tạo Vận Đơn
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Report Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex justify-between items-center p-4 lg:p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-800">Báo Cáo Nhanh</h3>
+              <button onClick={() => setShowReportModal(false)} className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 lg:p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                  <p className="text-xs font-bold text-blue-600 uppercase mb-1">Tổng chuyến</p>
+                  <p className="text-2xl font-black text-slate-800">145</p>
+                </div>
+                <div className="bg-green-50 p-4 rounded-xl border border-green-100">
+                  <p className="text-xs font-bold text-green-600 uppercase mb-1">Hoàn thành</p>
+                  <p className="text-2xl font-black text-slate-800">102</p>
+                </div>
+                <div className="bg-orange-50 p-4 rounded-xl border border-orange-100">
+                  <p className="text-xs font-bold text-orange-600 uppercase mb-1">Đang chạy</p>
+                  <p className="text-2xl font-black text-slate-800">35</p>
+                </div>
+                <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                  <p className="text-xs font-bold text-slate-600 uppercase mb-1">Chờ lệnh</p>
+                  <p className="text-2xl font-black text-slate-800">8</p>
+                </div>
+              </div>
+              <div className="pt-4">
+                <p className="text-sm text-slate-600 text-center">Báo cáo chi tiết sẽ được gửi qua email của bạn.</p>
+              </div>
+            </div>
+            <div className="p-4 lg:p-6 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <button onClick={() => setShowReportModal(false)} className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 bg-slate-100 rounded-lg transition-colors">
+                Đóng
+              </button>
+              <button onClick={() => setShowReportModal(false)} className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm flex items-center gap-2">
+                <FileText className="w-4 h-4" />
+                Xuất Excel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
